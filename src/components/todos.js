@@ -1,5 +1,7 @@
-export class Todo {
-    constructor(title, description, dueDate, project, priority, checklist) {
+export const myTodos = [];
+
+class Todo {
+    constructor(title, description, dueDate, project, priority) {
         if (!new.target) {
         throw Error("You must use the 'new' operator to call the constructor");
         }
@@ -9,7 +11,6 @@ export class Todo {
         this.dueDate = dueDate;
         this.project = project;
         this.priority = priority;
-        this.checklist = checklist;
     }
 
         get id() {
@@ -19,4 +20,9 @@ export class Todo {
         assignID() {
             return self.crypto.randomUUID()
         }
+}
+
+export function createTodo(title, description, dueDate, project, priority) {
+    let newTodo = new Todo(title, description, dueDate, project, priority);
+    myTodos.push(newTodo);
 }

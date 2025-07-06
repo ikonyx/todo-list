@@ -6,6 +6,50 @@
     <title>To Do List</title>
 </head>
 <body>
-    
+    <div id="container">
+        <div id="todos-container"></div>
+            <dialog id="todoInfoDialog">
+                    <form id="form" novalidate>
+                        
+                        <ul>
+                            <li>
+                                <label for="title">Title<span class="required-field"> *</span></label>
+                                <input type="text" id="title" name="title" 
+                                required>
+                            </li>
+
+                            <li>
+                                <label for="description">Description</span></label>
+                                <textarea id="description" name="description" rows="4" cols="50"></textarea>
+                            </li>
+
+                            <li>
+                                <label for="dueDate">Due Date:<span class="required-field"> *</span></label>
+                                <input type="date" id="dueDate" name="dueDate" 
+                                required>
+                            </li>
+
+                            <li>
+                                <label for="project">Project<span class="required-field"> *</span></label>
+                                <select id="project">
+                                </select>
+                            </li>
+
+                            <li>
+                                <label for="priority">Priority<span class="required-field"> *</span></label>
+                                <select id="priority">
+                                    <option>Low</option>
+                                    <option>Medium</option>
+                                    <option>High</option>
+                                </select>
+                            </li>
+
+                            <div class="formBtns">
+                                <button id="cancelBtn" formmethod="dialog">Cancel</button>
+                                <button id="confirmBtn" value="default" type="submit">Confirm</button>
+                            </div>
+                    </form>
+                </dialog>
+    </div>
 </body>
 </html>
