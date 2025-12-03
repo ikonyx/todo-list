@@ -1,7 +1,7 @@
 import "./styles.css";
-import { displaydialog, addTodosToDom } from "./components/dom-manipulation.js";
+import { displayDialog, addTodosToDom } from "./components/dom-manipulation.js";
 import { addSidebarContent } from "./components/sidebar.js";
 
-displaydialog()
+displayDialog()
 addTodosToDom()
 addSidebarContent()

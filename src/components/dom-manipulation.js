@@ -24,7 +24,9 @@ export function addTodosToDom() {
 
 function displayTask(todo) {
     const todosContainer = document.querySelector("#todos-container");
-    const todoDiv = document.createElement("li");
+    const todoWrapper = document.createElement("li");
+    todoWrapper.className = "todoWrapper";
+    const todoDiv = document.createElement("div");
     todoDiv.className = "todo";
 
     const todoTitle = document.createElement("div");
@@ -32,11 +34,13 @@ function displayTask(todo) {
     const todoDueDate = document.createElement("div");
     todoDueDate.textContent = todo.dueDate;
 
-    todosContainer.appendChild(todoDiv);
+    todoWrapper.appendChild(todoDiv);
+    todosContainer.appendChild(todoWrapper);
     addCheckbox();
 
     todoDiv.appendChild(todoTitle);
     todoDiv.appendChild(todoDueDate);
+    
 
     addDetails();
     
@@ -44,7 +48,7 @@ function displayTask(todo) {
 
 function addCheckbox() {
     const priority = document.querySelector("#priority").value;
-    const lastTodo = document.querySelector("#todos-container li:last-child");
+    const lastTodo = document.querySelector("#todos-container li:last-child .todo");
     const checkbox = document.createElement('input');
     checkbox.className = "checkbox";
     checkbox.type = 'checkbox';
@@ -58,8 +62,7 @@ function addCheckbox() {
 }
 
 function addDetails() {
-    const todosContainer = document.querySelector("#todos-container");
-    const lastTodo = document.querySelector("#todos-container li:last-child");
+    const lastTodo = document.querySelector("#todos-container li:last-child .todo");
     const detailsIcon = document.createElement('div');
     detailsIcon.textContent = "details";
     detailsIcon.dataset.indexNumber = myTodos.at(-1).id;
@@ -69,16 +72,26 @@ function addDetails() {
     detailsIcon.addEventListener("click", showTodoDetails);
 
     function showTodoDetails() {
+        const details = document.querySelector('.details');
+        if (details) details.remove();
+        if (details) {
+            if (details.dataset.indexNumber == detailsIcon.dataset.indexNumber) {
+                details.remove();
+                return;
+            }    
+        }
+
         for (let todo of myTodos) {
-            const details = document.querySelector('#details');
-            if (details) details.style.display === 'none';
 
             const detailsDiv = document.createElement('div');
-            detailsDiv.id = "details";
+            detailsDiv.className = "details";
             
             if (todo.id == detailsIcon.dataset.indexNumber) {
-                
-                const selectedTodo = document.querySelector('.todo')
+                detailsDiv.dataset.indexNumber = detailsIcon.dataset.indexNumber;
+                const selectedTodo = detailsIcon.closest('.todo');
+                const selectedTodoWrapper = selectedTodo.closest('.todoWrapper');
+                console.log(selectedTodoWrapper);
+                console.log(selectedTodo);
                 const description = document.createElement('div');
                 description.textContent = `Description: ${todo.description}`
                 const dueDate = document.createElement('div');
@@ -89,18 +102,17 @@ function addDetails() {
                 detailsDiv.appendChild(description);
                 detailsDiv.appendChild(dueDate);
                 detailsDiv.appendChild(priority);
+                
+                selectedTodoWrapper.appendChild(detailsDiv);
+                
 
-                selectedTodo.appendChild(detailsDiv);
-            
-
-            } 
-            
+            }   
         }   
     }
 }
 
 
-export function displaydialog() {
+export function displayDialog() {
     const header = document.querySelector("header");
     const dialogBtn = document.createElement('button');
     dialogBtn.textContent = "Add Task";
