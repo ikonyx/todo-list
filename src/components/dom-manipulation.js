@@ -1,123 +1,190 @@
-import { myTodos, createTodo } from "./todos.js"
+import { createTodo, editTodo } from "./todos.js"
 
-let id;
+let editingTodoId = null;
 
 export function addTodosToDom() {
     const form = document.querySelector("#form");
-    
+
+    const cancelBtn = document.querySelector("#cancelBtn");
+    const todoInfoDialog = document.querySelector("#todoInfoDialog");
+
+    cancelBtn.addEventListener("click", () => {
+        todoInfoDialog.close();
+        form.reset();
+    });
+
     form.addEventListener("submit", (event) => {
         event.preventDefault();
 
-        const title = document.querySelector("#title").value;
-        const description = document.querySelector("#description").value;
-        const dueDate = document.querySelector("#dueDate").value;
-        const project = document.querySelector("#project").value;
-        const priority = document.querySelector("#priority").value;
+        const todoData = {
+            title: document.querySelector("#title").value,
+            description: document.querySelector("#description").value,
+            dueDate: document.querySelector("#dueDate").value,
+            project: document.querySelector("#project").value,
+            priority: document.querySelector("#priority").value
+        };
 
-        createTodo(title, description, dueDate, project, priority, id);
+        saveTodo(todoData);
 
-        todoInfoDialog.close(displayTask(myTodos[myTodos.length - 1]));
-    
+        todoInfoDialog.close();
         form.reset();
     });
 }
+
+
+function saveTodo(todoData) { 
+    if (editingTodoId === null) {
+        const newTodo = createTodo(
+            todoData.title,
+            todoData.description,
+            todoData.dueDate,
+            todoData.project,
+            todoData.priority
+        );
+
+        displayTask(newTodo);
+        return; 
+    }
+
+
+    editTodo(editingTodoId, todoData);
+
+    const todoElement = document.querySelector(
+    `.todoWrapper [data-index-number="${editingTodoId}"]`
+    );
+
+    let todoWrapper = null;
+
+    if (todoElement) {
+        todoWrapper = todoElement.closest(".todoWrapper");
+    }
+
+    if (todoWrapper) {
+        const todoDiv = todoWrapper.querySelector(".todo");
+        const textElements = todoDiv.querySelectorAll("div");
+
+        textElements[0].textContent = todoData.title;
+        textElements[1].textContent = todoData.dueDate;
+    }
+
+    const detailsSection = document.querySelector(
+        `.details[data-index-number="${editingTodoId}"]`
+    );
+
+    if (detailsSection) {
+        detailsSection.children[0].textContent =
+            `Description: ${todoData.description}`;
+        detailsSection.children[1].textContent =
+            `Due Date: ${todoData.dueDate}`;
+        detailsSection.children[2].textContent =
+            `Priority: ${todoData.priority}`;
+    }
+
+    editingTodoId = null; 
+}
+
+
 
 function displayTask(todo) {
     const todosContainer = document.querySelector("#todos-container");
     const todoWrapper = document.createElement("li");
     todoWrapper.className = "todoWrapper";
+
     const todoDiv = document.createElement("div");
     todoDiv.className = "todo";
 
     const todoTitle = document.createElement("div");
     todoTitle.textContent = todo.title;
+
     const todoDueDate = document.createElement("div");
     todoDueDate.textContent = todo.dueDate;
 
     todoWrapper.appendChild(todoDiv);
     todosContainer.appendChild(todoWrapper);
-    addCheckbox();
+    
+    addCheckbox(todo, todoDiv);
 
     todoDiv.appendChild(todoTitle);
     todoDiv.appendChild(todoDueDate);
     
-
-    addDetails();
+    
+    addDetails(todo, todoDiv);
     
 }
 
-function addCheckbox() {
-    const priority = document.querySelector("#priority").value;
-    const lastTodo = document.querySelector("#todos-container li:last-child .todo");
+function addCheckbox(todo, todoDiv) {
+
     const checkbox = document.createElement('input');
     checkbox.className = "checkbox";
     checkbox.type = 'checkbox';
-    checkbox.dataset.indexNumber = myTodos.at(-1).id;
+    checkbox.dataset.indexNumber = todo.id;
 
-    lastTodo.appendChild(checkbox);
+    todoDiv.appendChild(checkbox);
 
-    if (priority == "Done") {
+    if (todo.priority === "Done") {
         checkbox.checked = true;
     }
 }
 
-function addDetails() {
-    const lastTodo = document.querySelector("#todos-container li:last-child .todo");
+function addDetails(todo, todoDiv) {
     const detailsIcon = document.createElement('div');
     detailsIcon.textContent = "details";
-    detailsIcon.dataset.indexNumber = myTodos.at(-1).id;
+    detailsIcon.dataset.indexNumber = todo.id;
 
-    lastTodo.appendChild(detailsIcon);
+    todoDiv.appendChild(detailsIcon);
 
     detailsIcon.addEventListener("click", showTodoDetails);
 
     function showTodoDetails() {
-        const details = document.querySelector('.details');
-        if (details) details.remove();
-        if (details) {
-            if (details.dataset.indexNumber == detailsIcon.dataset.indexNumber) {
-                details.remove();
-                return;
-            }    
+        const selectedTodo = detailsIcon.closest(".todoWrapper"); 
+        const existingDetails = selectedTodo.querySelector(".details"); 
+
+        const shouldClose = Boolean(existingDetails);
+
+        const openDetails = document.querySelector("#todos-container .details");
+
+        if (openDetails) {
+        openDetails.remove();
         }
 
-        for (let todo of myTodos) {
+        if (shouldClose) {
+        return;
+        }
 
-            const detailsDiv = document.createElement('div');
-            detailsDiv.className = "details";
-            
-            if (todo.id == detailsIcon.dataset.indexNumber) {
-                detailsDiv.dataset.indexNumber = detailsIcon.dataset.indexNumber;
-                const selectedTodo = detailsIcon.closest('.todo');
-                const selectedTodoWrapper = selectedTodo.closest('.todoWrapper');
-                console.log(selectedTodoWrapper);
-                console.log(selectedTodo);
-                const description = document.createElement('div');
-                description.textContent = `Description: ${todo.description}`
-                const dueDate = document.createElement('div');
-                dueDate.textContent = `Due Date: ${todo.dueDate}`
-                const priority = document.createElement('div');
-                priority.textContent = `Priority: ${todo.priority}`
+        if (existingDetails) { 
+            existingDetails.remove();
+            return;
+        }
 
-                detailsDiv.appendChild(description);
-                detailsDiv.appendChild(dueDate);
-                detailsDiv.appendChild(priority);
+        const detailsDiv = document.createElement("div");
+        detailsDiv.className = "details";
+        detailsDiv.dataset.indexNumber = todo.id; 
+
+        const description = document.createElement("div");
+        description.textContent = `Description: ${todo.description}`;
+
+        const dueDate = document.createElement("div");
+        dueDate.textContent = `Due Date: ${todo.dueDate}`;
+
+        const priority = document.createElement("div");
+        priority.textContent = `Priority: ${todo.priority}`;
+
+        detailsDiv.appendChild(description);
+        detailsDiv.appendChild(dueDate);
+        detailsDiv.appendChild(priority);
+
+        selectedTodo.appendChild(detailsDiv);
+
+        editTodoInDom(todo);        
                 
-                selectedTodoWrapper.appendChild(detailsDiv);
-                
-
-            }   
-        }   
-    }
-}
-
+    }   
+}   
+    
 
 export function displayDialog() {
     const header = document.querySelector("header");
     const dialogBtn = document.createElement('button');
     dialogBtn.textContent = "Add Task";
-
-    document.querySelector("#dueDate").min = new Date().toISOString().split("T")[0];
 
     header.appendChild(dialogBtn);
 
@@ -126,5 +193,38 @@ export function displayDialog() {
     function addTodoInfo() {
         const todoInfoDialog = document.querySelector("#todoInfoDialog");
         todoInfoDialog.showModal();
+    }
+}
+
+function editTodoInDom(todo) {
+    const activeDetailsSection = document.querySelector('.details');
+    const detailsIcons = document.createElement('div');
+    const editIcon = document.createElement('div');
+    editIcon.textContent = "edit";
+
+    detailsIcons.appendChild(editIcon)
+    activeDetailsSection.appendChild(detailsIcons);
+
+    editIcon.addEventListener("click", editTodoDetails);
+
+    function editTodoDetails() {
+        const todoInfoDialog = document.querySelector("#todoInfoDialog");
+        
+        const titleInput = document.querySelector("#title");
+        const descriptionInput = document.querySelector("#description");
+        const dueDateInput = document.querySelector("#dueDate");
+        const projectInput = document.querySelector("#project");
+        const priorityInput = document.querySelector("#priority");
+
+        titleInput.value = todo.title;
+        descriptionInput.value = todo.description;
+        dueDateInput.value = todo.dueDate;
+        projectInput.value = todo.project;
+        priorityInput.value = todo.priority;
+
+        editingTodoId = todo.id;
+
+        todoInfoDialog.showModal();
+
     }
 }
