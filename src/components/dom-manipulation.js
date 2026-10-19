@@ -1,4 +1,4 @@
-import { createTodo, editTodo } from "./todos.js"
+import { createTodo, editTodo, setTodoCompletion } from "./todos.js"
 
 let editingTodoId = null;
 
@@ -119,11 +119,14 @@ function addCheckbox(todo, todoDiv) {
     checkbox.type = 'checkbox';
     checkbox.dataset.indexNumber = todo.id;
 
+    checkbox.checked = todo.isCompleted;
+
     todoDiv.appendChild(checkbox);
 
-    if (todo.priority === "Done") {
-        checkbox.checked = true;
-    }
+    checkbox.addEventListener("change", () => {
+    setTodoCompletion(todo.id, checkbox.checked);
+    });
+
 }
 
 function addDetails(todo, todoDiv) {
@@ -144,11 +147,11 @@ function addDetails(todo, todoDiv) {
         const openDetails = document.querySelector("#todos-container .details");
 
         if (openDetails) {
-        openDetails.remove();
+            openDetails.remove();
         }
 
         if (shouldClose) {
-        return;
+            return;
         }
 
         if (existingDetails) { 
@@ -202,7 +205,7 @@ function editTodoInDom(todo) {
     const editIcon = document.createElement('div');
     editIcon.textContent = "edit";
 
-    detailsIcons.appendChild(editIcon)
+    detailsIcons.appendChild(editIcon);
     activeDetailsSection.appendChild(detailsIcons);
 
     editIcon.addEventListener("click", editTodoDetails);

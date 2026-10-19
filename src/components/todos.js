@@ -27,13 +27,23 @@ export function getTodos() {
 }
 
 export function editTodo(id, editedTodo) {
-    const todo = myTodos.find(i => i.id === id);
+    const todo = myTodos.find(todo => todo.id === id);
 
-    if (!todo) { 
-        return false;
-    }
+    if (!todo) return false;
 
     Object.assign(todo, editedTodo);
+
+    return true;
+}
+
+export function setTodoCompletion(id, isCompleted) {
+    const todo = myTodos.find(todo => todo.id === id);
+
+    if (!todo) return false;
+
+    todo.isCompleted = isCompleted;
+
+    console.log("Updated Todo:", todo);
 
     return true;
 }
