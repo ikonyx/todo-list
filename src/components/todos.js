@@ -47,3 +47,14 @@ export function setTodoCompletion(id, isCompleted) {
 
     return true;
 }
+
+export function deleteTodo(id) {
+    const index = myTodos.findIndex(todo => todo.id === id);
+
+    if (index === -1) return false;
+
+    myTodos.splice(index, 1);
+
+    console.log(getTodos());
+    return true;
+}

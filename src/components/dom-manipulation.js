@@ -1,4 +1,4 @@
-import { createTodo, editTodo, setTodoCompletion } from "./todos.js"
+import { createTodo, editTodo, setTodoCompletion, deleteTodo } from "./todos.js"
 
 let editingTodoId = null;
 
@@ -178,8 +178,29 @@ function addDetails(todo, todoDiv) {
 
         selectedTodo.appendChild(detailsDiv);
 
-        editTodoInDom(todo);        
-                
+        const detailsIcons = document.createElement('div');
+        detailsIcons.className = "detailsIcons";
+
+        const editIcon = document.createElement('div');
+        editIcon.id = "editIcon"
+        editIcon.textContent = "edit";
+
+        detailsIcons.appendChild(editIcon);
+        detailsDiv.appendChild(detailsIcons);
+
+        editIcon.addEventListener("click", () => {
+            editTodoInDom(todo);  
+        });
+
+        const deleteIcon = document.createElement('div');
+        deleteIcon.id = "deleteIcon";
+        deleteIcon.textContent = "delete";
+
+        detailsIcons.appendChild(deleteIcon);
+
+        deleteIcon.addEventListener("click", () => {
+            deleteTodoFromDom(todo, deleteIcon);
+        });                  
     }   
 }   
     
@@ -200,34 +221,32 @@ export function displayDialog() {
 }
 
 function editTodoInDom(todo) {
-    const activeDetailsSection = document.querySelector('.details');
-    const detailsIcons = document.createElement('div');
-    const editIcon = document.createElement('div');
-    editIcon.textContent = "edit";
+    
+    const todoInfoDialog = document.querySelector("#todoInfoDialog");
+    
+    const titleInput = document.querySelector("#title");
+    const descriptionInput = document.querySelector("#description");
+    const dueDateInput = document.querySelector("#dueDate");
+    const projectInput = document.querySelector("#project");
+    const priorityInput = document.querySelector("#priority");
 
-    detailsIcons.appendChild(editIcon);
-    activeDetailsSection.appendChild(detailsIcons);
+    titleInput.value = todo.title;
+    descriptionInput.value = todo.description;
+    dueDateInput.value = todo.dueDate;
+    projectInput.value = todo.project;
+    priorityInput.value = todo.priority;
 
-    editIcon.addEventListener("click", editTodoDetails);
+    editingTodoId = todo.id;
 
-    function editTodoDetails() {
-        const todoInfoDialog = document.querySelector("#todoInfoDialog");
-        
-        const titleInput = document.querySelector("#title");
-        const descriptionInput = document.querySelector("#description");
-        const dueDateInput = document.querySelector("#dueDate");
-        const projectInput = document.querySelector("#project");
-        const priorityInput = document.querySelector("#priority");
-
-        titleInput.value = todo.title;
-        descriptionInput.value = todo.description;
-        dueDateInput.value = todo.dueDate;
-        projectInput.value = todo.project;
-        priorityInput.value = todo.priority;
-
-        editingTodoId = todo.id;
-
-        todoInfoDialog.showModal();
-
-    }
+    todoInfoDialog.showModal();
+    
 }
+
+
+function deleteTodoFromDom(todo, deleteIcon) {
+    deleteTodo(todo.id);
+
+    const todoWrapper = deleteIcon.closest(".todoWrapper");
+    todoWrapper.remove();
+}
+
