@@ -44,6 +44,10 @@ export function addSidebarContent() {
         showTodos(getTodosByProject("Hobbies"));
     });
 
+    theOdinProject.addEventListener("click", () => {
+        showTodos(getTodosByProject("The Odin Project"));
+    });
+
     bucketListProject.addEventListener("click", () => {
         showTodos(getTodosByProject("Bucket List"));
     });
