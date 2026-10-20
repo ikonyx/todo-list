@@ -1,10 +1,13 @@
-import { createTodo, editTodo, setTodoCompletion, deleteTodo } from "./todos.js"
+import { getTodos, createTodo, editTodo, setTodoCompletion, deleteTodo } from "./todos.js"
 
 let editingTodoId = null;
 
 export function addTodosToDom() {
-    const form = document.querySelector("#form");
 
+    getTodos().forEach(todo => displayTask(todo));
+
+    const form = document.querySelector("#form");
+    
     const cancelBtn = document.querySelector("#cancelBtn");
     const todoInfoDialog = document.querySelector("#todoInfoDialog");
 

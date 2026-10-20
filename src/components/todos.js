@@ -1,4 +1,4 @@
-const myTodos = [];
+let myTodos = [];
 
 class Todo {
     constructor(title, description, dueDate, project, priority) {
@@ -19,6 +19,8 @@ export function createTodo(title, description, dueDate, project, priority) {
     const newTodo = new Todo(title, description, dueDate, project, priority);
     myTodos.push(newTodo);
 
+    saveTodos();
+
     return newTodo;
 }
 
@@ -33,6 +35,8 @@ export function editTodo(id, editedTodo) {
 
     Object.assign(todo, editedTodo);
 
+    saveTodos();
+
     return true;
 }
 
@@ -45,6 +49,8 @@ export function setTodoCompletion(id, isCompleted) {
 
     console.log("Updated Todo:", todo);
 
+    saveTodos();
+
     return true;
 }
 
@@ -56,9 +62,42 @@ export function deleteTodo(id) {
     myTodos.splice(index, 1);
 
     console.log(getTodos());
+
+    saveTodos();
+
     return true;
 }
 
 export function getTodosByProject(projectName) {
     return myTodos.filter(todo => todo.project === projectName);
+}
+
+export function saveTodos() {
+    localStorage.setItem("todos", JSON.stringify(myTodos));
+}
+
+export function loadTodos() {
+    const savedTodos = localStorage.getItem("todos");
+
+    if (!savedTodos) return;
+
+    myTodos = JSON.parse(savedTodos).map(savedTodo => {
+        const todo = new Todo(
+            savedTodo.title,
+            savedTodo.description,
+            savedTodo.dueDate,
+            savedTodo.project,
+            savedTodo.priority
+        );
+
+        todo.id = savedTodo.id;
+
+        if (savedTodo.isCompleted !== undefined) {
+            todo.isCompleted = savedTodo.isCompleted;
+        } else {
+            todo.isCompleted = false;
+        }
+
+        return todo;
+    });
 }
