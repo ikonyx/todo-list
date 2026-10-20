@@ -58,3 +58,7 @@ export function deleteTodo(id) {
     console.log(getTodos());
     return true;
 }
+
+export function getTodosByProject(projectName) {
+    return myTodos.filter(todo => todo.project === projectName);
+}

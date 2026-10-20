@@ -112,6 +112,15 @@ function displayTask(todo) {
     
 }
 
+export function showTodos(todos) {
+    const todosContainer = document.querySelector("#todos-container");
+    todosContainer.replaceChildren();
+
+    todos.forEach(todo => {
+        displayTask(todo);
+    });
+}
+
 function addCheckbox(todo, todoDiv) {
 
     const checkbox = document.createElement('input');
