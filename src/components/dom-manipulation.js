@@ -1,4 +1,5 @@
 import { getTodos, createTodo, editTodo, setTodoCompletion, deleteTodo } from "./todos.js"
+import { format, parseISO, isBefore, startOfToday } from "date-fns";
 
 let editingTodoId = null;
 
@@ -67,7 +68,7 @@ function saveTodo(todoData) {
         const textElements = todoDiv.querySelectorAll("div");
 
         textElements[0].textContent = todoData.title;
-        textElements[1].textContent = todoData.dueDate;
+        textElements[1].textContent = format(parseISO(todoData.dueDate), "MMM dd, yyyy");
     }
 
     const detailsSection = document.querySelector(
@@ -78,8 +79,6 @@ function saveTodo(todoData) {
         detailsSection.children[0].textContent =
             `Description: ${todoData.description}`;
         detailsSection.children[1].textContent =
-            `Due Date: ${todoData.dueDate}`;
-        detailsSection.children[2].textContent =
             `Priority: ${todoData.priority}`;
     }
 
@@ -100,7 +99,14 @@ function displayTask(todo) {
     todoTitle.textContent = todo.title;
 
     const todoDueDate = document.createElement("div");
-    todoDueDate.textContent = todo.dueDate;
+    const dueDate = parseISO(todo.dueDate);
+
+    todoDueDate.textContent = format(parseISO(todo.dueDate), "MMM dd, yyyy");
+
+    if (!todo.isCompleted && isBefore(dueDate, startOfToday())) {
+        todoDueDate.textContent = `Overdue · ${todoDueDate.textContent}`;
+        todoDueDate.classList.add("overdue");
+    }
 
     todoWrapper.appendChild(todoDiv);
     todosContainer.appendChild(todoWrapper);
@@ -137,6 +143,9 @@ function addCheckbox(todo, todoDiv) {
 
     checkbox.addEventListener("change", () => {
     setTodoCompletion(todo.id, checkbox.checked);
+
+    showTodos(getTodos());
+    
     });
 
 }
@@ -178,14 +187,10 @@ function addDetails(todo, todoDiv) {
         const description = document.createElement("div");
         description.textContent = `Description: ${todo.description}`;
 
-        const dueDate = document.createElement("div");
-        dueDate.textContent = `Due Date: ${todo.dueDate}`;
-
         const priority = document.createElement("div");
         priority.textContent = `Priority: ${todo.priority}`;
 
         detailsDiv.appendChild(description);
-        detailsDiv.appendChild(dueDate);
         detailsDiv.appendChild(priority);
 
         selectedTodo.appendChild(detailsDiv);

@@ -1,16 +1,58 @@
-import { getTodos, getTodosByProject } from "./todos.js";
+import { getTodos, getTodosByProject, getTodosByDate } from "./todos.js";
 import { showTodos } from "./dom-manipulation.js";
 
 
-export function addSidebarContent() {
-    const sidebar = document.querySelector("#sidebar");
-
-    
+function addAllTasks(sidebar) {
     const allTasks = document.createElement("div");
     allTasks.textContent = "All Tasks";
 
+    sidebar.appendChild(allTasks);
+
+    allTasks.addEventListener("click", () => {
+        showTodos(getTodos());
+    });
+}
+
+function addDateFilters(sidebar) {
+    const dateFiltersTitle = document.createElement("h3");
+    dateFiltersTitle.textContent = "Date Filters";
+
+    const dateFilters= document.createElement("ul");
+
+    const overdue = document.createElement("li");
+    overdue.textContent = "Overdue";
+
+    const today = document.createElement("li");
+    today.textContent = "Today";
+
+    const thisMonth = document.createElement("li");
+    thisMonth.textContent = "This Month";
+
+    sidebar.appendChild(dateFiltersTitle);
+    sidebar.appendChild(dateFilters);
+    dateFilters.appendChild(overdue);
+    dateFilters.appendChild(today);
+    dateFilters.appendChild(thisMonth);
+
+
+    overdue.addEventListener("click", () => {
+        showTodos(getTodosByDate("Overdue"));
+    });
+
+    today.addEventListener("click", () => {
+        showTodos(getTodosByDate("Today"));
+    });
+
+    thisMonth.addEventListener("click", () => {
+        showTodos(getTodosByDate("This Month"));
+    });
+}
+
+function addProjects(sidebar) {
+    const projectsTitle = document.createElement("h3");
+    projectsTitle.textContent = "Projects";
+
     const projects= document.createElement("ul");
-    projects.textContent = "My Projects";
 
     const workProject = document.createElement("li");
     workProject.textContent = "Work";
@@ -24,17 +66,13 @@ export function addSidebarContent() {
     const bucketListProject = document.createElement("li");
     bucketListProject.textContent = "Bucket List";
 
-    sidebar.appendChild(allTasks);
+    sidebar.appendChild(projectsTitle);
     sidebar.appendChild(projects);
     projects.appendChild(workProject);
     projects.appendChild(hobbiesProject);
     projects.appendChild(theOdinProject);
     projects.appendChild(bucketListProject);
 
-
-    allTasks.addEventListener("click", () => {
-        showTodos(getTodos());
-    });
 
     workProject.addEventListener("click", () => {
         showTodos(getTodosByProject("Work"));
@@ -51,5 +89,15 @@ export function addSidebarContent() {
     bucketListProject.addEventListener("click", () => {
         showTodos(getTodosByProject("Bucket List"));
     });
+}
+
+
+export function addSidebarContent() {
+    const sidebar = document.querySelector("#sidebar");
+
+    addAllTasks(sidebar);
+    addDateFilters(sidebar);
+    addProjects(sidebar);
+    
 }
 

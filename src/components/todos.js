@@ -1,3 +1,6 @@
+import { isBefore,  isSameMonth,  isToday, parseISO, startOfToday } from "date-fns";
+
+
 let myTodos = [];
 
 class Todo {
@@ -99,5 +102,30 @@ export function loadTodos() {
         }
 
         return todo;
+    });
+}
+
+
+export function getTodosByDate(filter) {
+    const today = startOfToday();
+
+    return myTodos.filter(todo => {
+        if (todo.isCompleted) return false;
+        
+        const dueDate = parseISO(todo.dueDate);
+
+        switch (filter) {
+            case "Overdue":
+                return isBefore(dueDate, today);
+
+            case "Today":
+                return isToday(dueDate);
+
+            case "This Month":
+                return isSameMonth(dueDate, today);
+
+            default:
+                return false;
+        }
     });
 }
