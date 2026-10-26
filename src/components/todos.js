@@ -1,4 +1,4 @@
-import { isBefore,  isSameMonth,  isToday, parseISO, startOfToday } from "date-fns";
+import { isBefore,  isSameMonth,  isSameWeek,  isToday, parseISO, startOfToday } from "date-fns";
 
 
 let myTodos = [];
@@ -120,6 +120,9 @@ export function getTodosByDate(filter) {
 
             case "Today":
                 return isToday(dueDate);
+            
+            case "This Week":
+                return isSameWeek(dueDate, today);
 
             case "This Month":
                 return isSameMonth(dueDate, today);

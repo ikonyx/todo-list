@@ -25,6 +25,9 @@ function addDateFilters(sidebar) {
     const today = document.createElement("li");
     today.textContent = "Today";
 
+    const thisWeek = document.createElement("li");
+    thisWeek.textContent = "This Week";
+
     const thisMonth = document.createElement("li");
     thisMonth.textContent = "This Month";
 
@@ -32,6 +35,7 @@ function addDateFilters(sidebar) {
     sidebar.appendChild(dateFilters);
     dateFilters.appendChild(overdue);
     dateFilters.appendChild(today);
+    dateFilters.appendChild(thisWeek);
     dateFilters.appendChild(thisMonth);
 
 
@@ -41,6 +45,10 @@ function addDateFilters(sidebar) {
 
     today.addEventListener("click", () => {
         showTodos(getTodosByDate("Today"));
+    });
+
+    thisWeek.addEventListener("click", () => {
+        showTodos(getTodosByDate("This Week"));
     });
 
     thisMonth.addEventListener("click", () => {
