@@ -1,7 +1,8 @@
-import { getTodos, createTodo, editTodo, setTodoCompletion, deleteTodo } from "./todos.js"
+import { getTodos, getTodosByProject, getTodosByDate, createTodo, editTodo, setTodoCompletion, deleteTodo } from "./todos.js"
 import { format, parseISO, isBefore, startOfToday } from "date-fns";
 
 let editingTodoId = null;
+let activeFilter = { type: "all", value: null };
 
 export function addTodosToDom() {
 
@@ -46,7 +47,7 @@ function saveTodo(todoData) {
             todoData.priority
         );
 
-        displayTask(newTodo);
+        showTodosByFilter(activeFilter.type, activeFilter.value);
         return; 
     }
 
@@ -142,9 +143,9 @@ function addCheckbox(todo, todoDiv) {
     todoDiv.appendChild(checkbox);
 
     checkbox.addEventListener("change", () => {
-    setTodoCompletion(todo.id, checkbox.checked);
+        setTodoCompletion(todo.id, checkbox.checked);
 
-    showTodos(getTodos());
+        showTodosByFilter(activeFilter.type, activeFilter.value);
     
     });
 
@@ -265,5 +266,22 @@ function deleteTodoFromDom(todo, deleteIcon) {
 
     const todoWrapper = deleteIcon.closest(".todoWrapper");
     todoWrapper.remove();
+}
+
+
+export function showTodosByFilter(type, value = null) {
+    activeFilter = { type, value };
+
+    let todos;
+
+    if (type === "project") {
+        todos = getTodosByProject(value);
+    } else if (type === "date") {
+        todos = getTodosByDate(value);
+    } else {
+        todos = getTodos();
+    }
+
+    showTodos(todos);
 }
 

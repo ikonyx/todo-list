@@ -1,5 +1,4 @@
-import { getTodos, getTodosByProject, getTodosByDate } from "./todos.js";
-import { showTodos } from "./dom-manipulation.js";
+import { showTodosByFilter } from "./dom-manipulation.js";
 
 
 function addAllTasks(sidebar) {
@@ -9,7 +8,7 @@ function addAllTasks(sidebar) {
     sidebar.appendChild(allTasks);
 
     allTasks.addEventListener("click", () => {
-        showTodos(getTodos());
+        showTodosByFilter("all");
     });
 }
 
@@ -40,19 +39,19 @@ function addDateFilters(sidebar) {
 
 
     overdue.addEventListener("click", () => {
-        showTodos(getTodosByDate("Overdue"));
+        showTodosByFilter("date", "Overdue");
     });
 
     today.addEventListener("click", () => {
-        showTodos(getTodosByDate("Today"));
+        showTodosByFilter("date", "Today");
     });
 
     thisWeek.addEventListener("click", () => {
-        showTodos(getTodosByDate("This Week"));
+        showTodosByFilter("date", "This Week");
     });
 
     thisMonth.addEventListener("click", () => {
-        showTodos(getTodosByDate("This Month"));
+        showTodosByFilter("date", "This Month");
     });
 }
 
@@ -83,19 +82,19 @@ function addProjects(sidebar) {
 
 
     workProject.addEventListener("click", () => {
-        showTodos(getTodosByProject("Work"));
+        showTodosByFilter("project", "Work");
     });
 
     hobbiesProject.addEventListener("click", () => {
-        showTodos(getTodosByProject("Hobbies"));
+        showTodosByFilter("project", "Hobbies");
     });
 
     theOdinProject.addEventListener("click", () => {
-        showTodos(getTodosByProject("The Odin Project"));
+        showTodosByFilter("project", "The Odin Project");
     });
 
     bucketListProject.addEventListener("click", () => {
-        showTodos(getTodosByProject("Bucket List"));
+        showTodosByFilter("project", "Bucket List");
     });
 }
 
